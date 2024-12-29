@@ -1,0 +1,11 @@
+ll binary_exponentiation(ll a,ll b){
+    if(b == 0) return 1;
+    if(b&1){
+        ll t = binary_exponentiation(a,(b-1)/2);
+        t = (t*t)%mod;
+        return ((a*t)%mod);
+    }else{
+        ll t = binary_exponentiation(a,b/2);
+        return ((t*t)%mod);
+    }
+}
