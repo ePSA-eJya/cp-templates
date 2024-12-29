@@ -1,0 +1,52 @@
+class Disjointset{
+    
+    public:
+    vector<int>rank,parent,size;
+    Disjointset(int n){
+        size.resize(n+1,1);
+        rank.resize(n+1,0);
+        parent.resize(n+1);
+        for(int i=0;i<=n;i++){
+            parent[i]=i;
+        }
+    }
+        
+    int findultimateparent(int x){
+        if(x==parent[x])return x;
+        
+        return parent[x]=findultimateparent(parent[x]);
+    }
+        
+    void unionbyrank(int x,int y){
+        int ulpx=findultimateparent(x);
+        int ulpy=findultimateparent(y);
+        
+        if(ulpx==ulpy)return ;
+        else if(rank[ulpx]<rank[ulpy]){
+            parent[ulpx]=ulpy;
+        }
+        else if(rank[ulpx]>rank[ulpy]){
+            parent[ulpy]=ulpx;
+        }
+        else{
+            parent[ulpx]=ulpy;
+            rank[ulpy]++;
+        }
+        
+    }
+
+    void unionbysize(int x,int y){
+        int ulpx=findultimateparent(x);
+        int ulpy=findultimateparent(y);
+        if(ulpx==ulpy)return;
+        if(size[ulpx]>size[ulpy]){
+            parent[ulpy]=ulpx;
+            size[ulpx]+=size[ulpy];
+        }
+        else{
+            parent[ulpx]=ulpy;
+            size[ulpy]+=size[ulpx];
+        }
+    }
+    
+};
