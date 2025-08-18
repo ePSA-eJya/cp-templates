@@ -1,0 +1,28 @@
+ll binary_exponentiation(ll a,ll b){
+    if(b==0) return 1;
+
+    if(b%2==0){
+        ll t=binary_exponentiation(a,b/2);
+        return (t*t)%mod;
+    }
+    else{
+        ll t=binary_exponentiation(a,(b-1)/2);
+        t*=t;t%=mod;
+        return (a*t)%mod;
+    }
+}
+ll fact(ll n)
+{
+    if (n == 0 || n == 1)
+        return 1;
+    return (n * fact(n - 1))%mod;
+}
+ll modncr(ll n,ll r){
+    if(r<0 or r>n) return 0;
+    if(r==0) return 1;
+
+    ll a=fact(n);
+    ll b=(fact(r)*fact(n-r))%mod;
+
+    return (a*binary_exponentiation(b,mod-2))%mod; //fermats little theorm
+}
