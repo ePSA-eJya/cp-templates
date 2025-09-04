@@ -1,0 +1,46 @@
+void dfs(vector<vll>&adj,vector<vll>&ancestor,ll node,ll par){
+    ancestor[node][0]=par;
+    // cout<<node<<" ";
+    for(auto it:adj[node]){
+        dfs(adj,ancestor,it,node);
+    }
+}
+void preprocess(vector<vll>&adj,vector<vll>&ancestor,ll n,ll maxn){
+    dfs(adj,ancestor,1,-1);
+    rep(j,1,maxn+1){
+        rep(i,1,n+1){
+            if(ancestor[i][j-1]!=-1){
+                ancestor[i][j]=ancestor[ancestor[i][j-1]][j-1];
+            }
+        }
+    }
+}
+ll findkancestor(vector<vll>&ancestor,ll node,ll k,ll maxn){
+    for(ll i=maxn;i>=0;i--){
+        if(k&(1<<i)){
+            if(ancestor[node][i]==-1) return ancestor[node][i];
+            node=ancestor[node][i];
+        }
+    }
+
+    return node;
+}
+void solve()
+{
+    ll n,m;cin>>n>>m;
+    ll maxn=log2(n)+1;
+    vector<vll>adj(n+1),ancestor(n+1,vll(maxn,-1));
+
+    rep(i,0,m){
+        ll u,v,d;cin>>u>>v; adj[u].pb(v);
+    }
+    
+    preprocess(adj,ancestor,n,maxn);//cout<<"ffo";
+    // cout << findkancestor(ancestor, 7, 3, maxn) << "\n";
+    // cout << findkancestor(ancestor, 5, 1, maxn) << "\n";
+    // cout << findkancestor(ancestor, 7, 4, maxn) << "\n";
+    // cout << findkancestor(ancestor, 6, 4, maxn) << "\n";
+    cout<<endl;
+    
+}
+ 
