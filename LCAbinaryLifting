@@ -1,0 +1,57 @@
+ll n; vector<vll>boss,adj;
+vll level;
+void dfs(ll node,ll par,ll l){
+    boss[node][0]=par;
+    level[node]=l;
+
+    for(auto it:adj[node]){
+        if(it!=par) dfs(it,node,l+1);
+    }
+}
+void precompute(){
+    dfs(1,-1,0);
+    rep(i,1,21){
+        rep(j,1,n+1){
+            if(boss[j][i-1]!=-1)
+            boss[j][i]=boss[boss[j][i-1]][i-1];
+        }
+    }
+}
+
+ll lca(ll p,ll q){
+    if(level[p]<level[q]) swap(p,q);
+
+    ll diff=level[p]-level[q];
+
+    for(ll i=20;i>=0;i--){
+        if(diff&(1<<i)) p=boss[p][i];
+    }
+
+    if(p==q) return p;
+
+    for(ll i=20;i>=0;i--){
+        if(boss[p][i]!=boss[q][i]){
+            p=boss[p][i];
+            q=boss[q][i];
+        }
+    }
+    return boss[p][0];
+}
+
+void solve()
+{
+    ll m;cin>>n>>m;
+    // cout<<"################################################ ";
+    // boss.resize(n+1,1);
+    boss.resize(n+1,vll(21,-1));
+    adj.resize(n+1);level.resize(n+1,0);
+    rep(i,2,n+1){
+        ll u;cin>>u;adj[u].pb(i);adj[i].pb(u);
+    }
+    precompute();
+    rep(i,0,m){
+        ll u,v;cin>>u>>v;;
+        cout<<lca(u,v)<<endl;
+    }
+   
+}
