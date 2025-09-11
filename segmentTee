@@ -1,0 +1,89 @@
+#include<bits/stdc++.h>
+typedef long long ll;
+typedef long double ld;
+#define vin vector<int>
+#define vll vector<ll>
+#define br cout<<endl
+#define no cout<<"NO"<<endl
+#define yes cout<<"YES"<<endl
+#define pb push_back
+#define F first
+#define S second
+#define all(v) v.begin(),v.end()
+#define pr(v) for(auto it:v) cout<<it<<" ";cout<<endl;
+#define rep(i,a,b) for(ll i=a; i<b; ++i)
+#define debug(x) cout<< #x<<'='<<x<<endl;
+#define IOS ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+using namespace std;
+const ll mod=1e9+7;
+ 
+//evu
+//lyinf
+//iwnlyg
+//it's easy; 
+//just think;
+// for factors use sieve
+vll seg,a;
+void build(ll segl,ll segr,ll ind){
+    if(segl==segr){
+        seg[ind]=a[segl];return;
+    }
+    ll mid=(segl+segr)/2;
+    build(segl,mid,2*ind+1);
+    build(mid+1,segr,2*ind+2);
+    seg[ind]=seg[2*ind+1]+seg[2*ind+2];
+}
+void update(ll segl,ll segr,ll k,ll u,ll ind){
+    if(segl==segr){
+        seg[ind]=u;return;
+    }
+    ll mid=(segl+segr)/2;
+    if(k<=mid) update(segl,mid,k,u,2*ind+1);
+    else  update(mid+1,segr,k,u,2*ind+2);
+    seg[ind]=seg[2*ind+1]+seg[2*ind+2];
+}
+ll query(ll segl,ll segr,ll l,ll r,ll ind){
+    if(segr<l or segl>r) return 0; //no overlap
+    if(segl>=l && segr<= r) {//overlap
+        return seg[ind];
+    }
+ 
+    //partial
+    ll mid=(segl+segr)/2;
+    ll left=query(segl,mid,l,r,2*ind+1);
+    ll right=query(mid+1,segr,l,r,2*ind+2);
+    return left+right;
+}
+
+void solve()
+{
+    ll n,q;cin>>n>>q;
+    seg.resize(4*n);a.resize(n);
+    rep(i,0,n) cin>>a[i];
+    // vector<vector<
+    build(0,n-1,0);
+    vll ans;
+    rep(i,0,q){
+        ll x,l,r;cin>>x;
+        if(x==1){
+            ll k,u;cin>>k>>u;k--;update(0,n-1,k,u,0);
+        }
+        else
+        {
+            cin>>l>>r;l--;r--;
+            ans.pb(query(0,n-1,l,r,0));
+        }
+    }
+  
+    for(auto it:ans) cout<<it<<endl;
+    cout<<endl;
+}
+ 
+int main()
+{
+    IOS;
+    ll eJya;
+    // cin>>eJya; while(eJya--) 
+    solve();    
+}
+//#octzom
