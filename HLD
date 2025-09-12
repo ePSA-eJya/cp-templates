@@ -1,0 +1,201 @@
+#include<bits/stdc++.h>
+typedef long long ll;
+typedef long double ld;
+#define vin vector<int>
+#define vll vector<ll>
+#define br cout<<endl
+#define no cout<<"NO"<<endl
+#define yes cout<<"YES"<<endl
+#define pb push_back
+#define F first
+#define S second
+#define all(v) v.begin(),v.end()
+#define pr(v) for(auto it:v) cout<<it<<" ";cout<<endl;
+#define rep(i,a,b) for(ll i=a; i<b; ++i)
+#define debug(x) cout<< #x<<'='<<x<<endl;
+#define IOS ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+using namespace std;
+const ll mod=1e9+7;
+const int N=2e5 +1;
+
+//evu
+//lyinf
+//iwnlyg
+//it's easy; 
+//just think;
+// for factors use sieve
+ll dis[N],v[N],tp[N],depth[N],sz[N],arr[N],id[N],seg[4*N];//vll seg;
+ll n;
+vll adj[N];
+ll ancestor[N][21];
+ 
+void build(ll ind, ll segl, ll segr) {
+    if (segl == segr) {
+        seg[ind]=v[segl];return;
+    } 
+    
+    ll mid = (segl+segr)/2;
+    build(2*ind+1,segl,mid);
+    build(2*ind+2,mid+1,segr);
+    seg[ind]=seg[2*ind+1]+seg[2*ind+2];
+    
+}
+void update(ll segl,ll segr,ll k,ll u,ll ind){
+    if(segl==segr){
+        seg[ind]=u;return;
+    }
+    ll mid=(segl+segr)/2;
+    if(k<=mid) update(segl,mid,k,u,2*ind+1);
+    else  update(mid+1,segr,k,u,2*ind+2);
+    seg[ind]=seg[2*ind+1]+seg[2*ind+2];
+}
+ll segquery(ll segl,ll segr,ll l,ll r,ll ind){
+    if(segr<l or segl>r) return 0; //no overlap
+    if(segl>=l && segr<= r) {//overlap
+        return seg[ind];
+    }
+    //partial
+    ll mid=(segl+segr)/2;
+    ll left=segquery(segl,mid,l,r,2*ind+1);
+    ll right=segquery(mid+1,segr,l,r,2*ind+2);
+    return left+right;
+}
+ 
+ 
+void markparent(ll node,ll p,ll d){
+    dis[node]=d;
+    for(auto it:adj[node]){
+        if(it!=p){
+            ancestor[it][0]=node;
+            markparent(it,node,d+1);
+        }
+    }
+}
+void mp(){
+    markparent(1,0,0);
+    rep(i,1,21){
+        rep(node,1,n+1){
+            if(ancestor[node][i-1]!=0)
+            ancestor[node][i]=ancestor[ancestor[node][i-1]][i-1];
+        }
+    }
+}
+ll dfs(ll curr,ll par){
+    // p[curr]=par;
+    // debug(curr);
+    sz[curr]=1;
+    for(auto it:adj[curr]){
+        if(it!=par){
+            // we are finfing which adj node will be 
+            // added to the currect node(heavy)
+            depth[it]=depth[curr]+1;
+            // p[it]=curr;
+            sz[curr]+=dfs(it,curr); 
+        }
+    }
+    return sz[curr];
+}
+ll lca(ll u,ll v){
+    if(dis[u]<dis[v]) swap(u,v);
+    ll d=dis[u]-dis[v];
+ 
+    rep(i,0,21){
+        if(d&(1ll<<i)){//jump
+            u=ancestor[u][i];
+        }
+    }
+    if(u==v) return u;
+    
+    for(ll j=20;j>=0;j--){
+        if(ancestor[u][j]!=ancestor[v][j]){
+            u=ancestor[u][j];
+            v=ancestor[v][j];
+        }
+    }
+    return ancestor[u][0];
+}
+// single segment tree
+ll cnt=1;
+void HLD(ll curr,ll par,ll top){
+    id[curr]=cnt++; // position in the chain
+    tp[curr]=top;  // the chain starts at this pos
+    // update(id[curr],v[curr]);
+    ll heavychild=-1,heavysize=-1;
+    for(auto it:adj[curr]){
+        if(it==par) continue;
+        if(sz[it]>heavysize){
+            heavysize=sz[it];
+            heavychild=it;
+        }
+    }
+ 
+    if(heavychild!=-1) {
+        // v[cnt]=arr[curr];                                                  
+        HLD(heavychild,curr,top);
+    }//
+    // create a new chain for light node
+    for(auto it:adj[curr]){
+        if(it!=ancestor[curr][0] && it!=heavychild)
+        HLD(it,curr,it);
+    }
+}
+ll query(ll x,ll y){
+    ll res=0;
+    if(depth[x]<depth[y]) swap(x,y);
+    // cout<<"hehehehhehehe "<<x<<" "<<y<<endl;
+    while(tp[x]!=tp[y]){
+        // cout<<"dadaddadadad"<<id[tp[x]]<<" "<<id[x]<<endl;
+        res=res+segquery(0,n-1,id[tp[x]]-1,id[x]-1,0);
+        x=ancestor[tp[x]][0];        
+    }
+    
+    // if(x==y) return res;
+    // cout<<"check "<<id[y]<<" "<<id[x]<<" "<<x<<" "<<y<<endl;
+    res=res+segquery(0,n-1,id[y]-1,id[x]-1,0);
+    return res;
+}
+ 
+void solve()
+{
+    ll q;cin>>n>>q;//seg.resize(4*n);
+    rep(i,0,n) cin>>arr[i];
+    rep(i,1,n){
+        ll u,v;cin>>u>>v;
+        adj[u].pb(v);adj[v].pb(u);
+    }
+    mp();dfs(1,0);HLD(1,0,1);
+    // pr(id);
+    rep(i,1,n+1){
+        ll pos=id[i]-1;
+        v[pos]=arr[i-1];
+    }
+    // pr(v);
+    // rep(i,0,n) cout<<v[i]<<" ";
+    build(0,0,n-1);
+    rep(i,0,q){
+        ll t;cin>>t;
+        if(t==1){
+            ll a,b;
+            cin>>a>>b;
+            // cout<<"update: "<<id[a]-1<<" "<<b<<endl;
+            update(0, n-1, id[a]-1, b,0);
+            // pr(seg);
+        }
+        else{
+            ll x;
+            cin>>x; cout<<query(1,x)<<endl;
+        }
+    }
+    // cout<<endl;
+}
+
+int main()
+{
+    IOS;
+    // ll eJya;
+    // cin>>eJya; while(eJya--) 
+    solve();    
+}
+//#octzom
+// 3,9,1,9,6,2,9,3,8,10
+// 3,9,1,9,7,2,9,1,8,10
