@@ -1,4 +1,5 @@
-vector<int>kmp(string &s){
+// s= needle + "#" + haystack;
+vector<int>kmp(string &s){  
     vector<int>lps(s.size(),0);
 
     for(int i=1;i<lps.size();i++){
