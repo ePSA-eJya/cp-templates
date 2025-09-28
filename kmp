@@ -1,0 +1,15 @@
+vector<int>kmp(string &s){
+    vector<int>lps(s.size(),0);
+
+    for(int i=1;i<lps.size();i++){
+        int prev=lps[i-1];
+
+        while(prev>0 && s[i]!=s[prev]){
+            prev=lps[prev-1];
+        }
+
+        lps[i]=prev+(s[i]==s[prev]?1:0);
+    }
+
+    return lps;
+}
