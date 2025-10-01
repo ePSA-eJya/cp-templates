@@ -1,0 +1,7 @@
+for(ll j=1;j*j<=a;j++){
+    if(a%j==0){
+        cout<<j<<" ";
+        if(j*j!=a) cout<<a/j<<" ";
+    }
+}
+
