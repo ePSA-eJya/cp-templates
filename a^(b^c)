@@ -1,0 +1,24 @@
+// https://www.geeksforgeeks.org/dsa/find-power-power-mod-prime
+ll binex(ll a,ll b,ll mod){
+    if(b==0) return 1;
+
+    if(b%2==0){
+        ll x=binex(a,b/2,mod)%mod;
+        x=x*x;x%=mod;
+        return x;
+    }
+    else{
+        ll x=binex(a,b/2,mod)%mod;
+        x=x*x;x%=mod;
+        x*=a;x%=mod;
+        return x;
+    }
+}
+void solve()
+{
+    // a^(b^c)
+    ll a,b,c;cin>>a>>b>>c;
+    // cout<<"################################################ ";
+    ll x=binex(b,c,mod-1);//x%=mod;
+    cout<<binex(a,x,mod)<<endl;
+}
