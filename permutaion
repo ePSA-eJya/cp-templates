@@ -1,0 +1,39 @@
+const int MOD = 1e9+7;
+const int MAXN = 1e5 + 5;
+
+long long fact[MAXN], invFact[MAXN];
+
+// Modular exponentiation
+long long modPow(long long a, long long b, long long m) {
+    long long res = 1;
+    a %= m;
+    while(b) {
+        if(b & 1) res = res * a % m;
+        a = a * a % m;
+        b >>= 1;
+    }
+    return res;
+}
+
+// Precompute factorials and inverse factorials
+void precompute() {
+    fact[0] = 1;
+    for(int i = 1; i < MAXN; i++) fact[i] = fact[i-1] * i % MOD;
+    for(int i = 0; i < MAXN; i++) invFact[i] = modPow(fact[i], MOD-2, MOD);
+}
+
+long long distinctArrangements(const string& s) {
+    unordered_map<char,int> freq;
+    for(char c : s) freq[c]++;
+
+    long long res = fact[s.size()];
+    for(auto it : freq) res = res * invFact[it.second] % MOD;
+
+    return res;
+}
+
+int main() {
+    precompute();
+    string s = "AABCY";
+    cout << distinctArrangements(s) << endl; // Output: 15
+}
