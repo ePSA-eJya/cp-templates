@@ -1,4 +1,6 @@
 int timer=1;
+// tin[node]=time when node was visited for  the first time
+// low[node]=lowest time of all adj nodes except parent
 void dfs(int node,int parent,vector<vector<int>>&adj,vector<vector<int>>&b,vector<int>&vis,vector<int>&low,vector<int>&tin){
     vis[node]=1;
     low[node]=timer;
