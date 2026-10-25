@@ -28,6 +28,13 @@ const ll mod=1e9+7;
 //     ###########   ###           ###########   #####          #####
 // }
 
+bool cmp(int a,int b){
+    if(a<b) return false; //agr swap krna hai toh return false
+    return true;
+}
+
+bool cmp(int a,int b){
+    return (a>b); //joh order chahiye return that
 void solve()
 {
     ll n,q;cin>>n>>q;
